@@ -5,6 +5,8 @@ import { SimpleMovie, TMDBMovie } from "../Types/Movie"
 const TMDB_TOKEN = import.meta.env.VITE_ACCESS_KEY
 
 const BASE_URL = "https://api.themoviedb.org/3"
+
+const DISCOVER_MOVIE_URL="https://api.themoviedb.org/3/discover/movie";
 // movieService.ts
 
 export const fetchMovieDetails = async (movieId: string) => {
@@ -34,6 +36,31 @@ export const useMovieDetails = (movieId: string) => {
     })
 }
 
+export const useGetRecommendedMovies = (year: any, genre: any) => {
+    return useQuery({
+        queryKey: ["recommendedMovies", year, genre],
+        queryFn: () => getRecommendedMovies(year, genre),
+        enabled: !!year && !!genre, // Only fetch if both year and genre are provided
+    });
+};
+
+export const getRecommendedMovies = async (year: number, genre: number) => {
+    const url = `${DISCOVER_MOVIE_URL}?api_key=${TMDB_TOKEN}&primary_release_year=${year}&with_genres=${genre}&language=en-US&sort_by=release_date.desc&page=1`
+
+    try {
+        const response = await axios.get(url)
+        return response.data.results.map((movie: TMDBMovie) => ({
+            id: movie.id.toString(),
+            title: movie.title,
+            poster_path: movie.poster_path,
+            release_date: movie.release_date,
+            genre_ids: movie.genre_ids,
+        }))
+    } catch (error) {
+        console.error("Error fetching recommended movies:", error)
+        throw error
+    }
+}
 
 export const fetchMovieProviders = async (movieId: string) => {
     const url = `${BASE_URL}/movie/${movieId}/watch/providers`
