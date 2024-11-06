@@ -25,6 +25,7 @@ const SearchMovie: React.FC = () => {
     const [searchTerm, setSearchTerm] = useState<string>("")
     const [selectedYear, setSelectedYear] = useState<string>("")
     const [selectedGenre, setSelectedGenre] = useState<string>("")
+    const [selectedLanguage, setSelectedLanguage] = useState<string>("") // New state for language filter
     const [searchHistory, setSearchHistory] = useState<SearchHistoryItem[]>([])
 
     const {
@@ -34,7 +35,8 @@ const SearchMovie: React.FC = () => {
     } = useSearchMovies(
         searchTerm,
         selectedYear ? parseInt(selectedYear) : undefined,
-        selectedGenre ? parseInt(selectedGenre) : undefined
+        selectedGenre ? parseInt(selectedGenre) : undefined,
+        selectedLanguage || undefined // Pass selected language filter to the API
     )
 
     useEffect(() => {
@@ -99,12 +101,27 @@ const SearchMovie: React.FC = () => {
     const years = Array.from({ length: 70 }, (_, i) => currentYear - i)
     const genres = Object.entries(genreMap)
 
+    // List of languages (you can expand this list as needed)
+    const languages = [
+        { code: "en", name: "English" },
+        { code: "es", name: "Spanish" },
+        { code: "fr", name: "French" },
+        { code: "hi", name: "Hindi" },
+        { code: "gu", name: "Gujarati" },
+        { code: "ta", name: "Tamil" },
+        // Add more languages here
+    ]
+
     const handleYearSelect = (year: string) => {
         setSelectedYear(year === selectedYear ? "" : year)
     }
 
     const handleGenreSelect = (genreId: string) => {
         setSelectedGenre(genreId === selectedGenre ? "" : genreId)
+    }
+
+    const handleLanguageSelect = (languageCode: string) => {
+        setSelectedLanguage(languageCode === selectedLanguage ? "" : languageCode)
     }
 
     return (
@@ -177,6 +194,37 @@ const SearchMovie: React.FC = () => {
                             <Button
                                 variant="ghost"
                                 onClick={() => setSelectedGenre("")}
+                                className="p-2 text-white hover:bg-gray-700"
+                            >
+                                <X className="h-4 w-4" />
+                            </Button>
+                        )}
+                    </div>
+
+                    {/* Language Dropdown */}
+                    <div className="flex items-center space-x-2 w-full sm:w-auto justify-center">
+                        <DropdownMenu>
+                            <DropdownMenuTrigger asChild>
+                                <Button className="w-full sm:w-40 bg-gray-800 text-white hover:bg-gray-700">
+                                    {selectedLanguage || "Select Language"}
+                                    <ChevronDown className="ml-2 h-4 w-4" />
+                                </Button>
+                            </DropdownMenuTrigger>
+                            <DropdownMenuContent className="max-h-[300px] overflow-y-auto bg-gray-800 text-white">
+                                {languages.map(({ code, name }) => (
+                                    <DropdownMenuItem
+                                        key={code}
+                                        onClick={() => handleLanguageSelect(code)}
+                                    >
+                                        {name}
+                                    </DropdownMenuItem>
+                                ))}
+                            </DropdownMenuContent>
+                        </DropdownMenu>
+                        {selectedLanguage && (
+                            <Button
+                                variant="ghost"
+                                onClick={() => setSelectedLanguage("")}
                                 className="p-2 text-white hover:bg-gray-700"
                             >
                                 <X className="h-4 w-4" />
