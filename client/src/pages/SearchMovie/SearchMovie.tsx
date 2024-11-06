@@ -256,63 +256,6 @@ const SearchMovie: React.FC = () => {
                 </div>
             </header>
 
-            {/* Recommended Movies Section */}
-            {(selectedYear || selectedGenre) && (
-                <div className="w-full px-4 py-8">
-                    {isLoadingRecommended ? (
-                        <div className="text-center text-gray-400">Loading...</div>
-                    ) : (
-                        <>
-                            {recommendedMovies && recommendedMovies.length > 0 && (
-                                <>
-                                    <h2 className="text-2xl font-bold mb-4 text-center sm:text-left">
-                                        Recommended Movies
-                                    </h2>
-                                    <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4">
-                                        {recommendedMovies.map(
-                                            (movie: SimpleMovie) => (
-                                                <div
-                                                    key={movie.id}
-                                                    className="cursor-pointer transition-transform duration-300 hover:scale-105"
-                                                    onClick={handleClick(
-                                                        movie.id,
-                                                        movie.title
-                                                    )}
-                                                >
-                                                    {movie.poster_path ? (
-                                                        <img
-                                                            src={`https://image.tmdb.org/t/p/w300${movie.poster_path}`}
-                                                            alt={movie.title}
-                                                            className="w-full h-auto rounded"
-                                                        />
-                                                    ) : (
-                                                        <div className="w-full h-0 pb-[150%] bg-gray-800 rounded flex items-center justify-center">
-                                                            <span className="text-center p-2">
-                                                                {movie.title}
-                                                            </span>
-                                                        </div>
-                                                    )}
-                                                    <h3 className="mt-2 text-sm font-medium truncate">
-                                                        {movie.title}
-                                                    </h3>
-                                                    <p className="text-xs text-gray-400">
-                                                        {
-                                                            movie.release_date?.split(
-                                                                "-"
-                                                            )[0]
-                                                        }
-                                                    </p>
-                                                </div>
-                                            )
-                                        )}
-                                    </div>
-                                </>
-                            )}
-                        </>
-                    )}
-                </div>
-            )}
-
             {/* Movie List */}
             <div className="flex-1 px-4 py-8 overflow-auto w-full">
                 {isLoading && searchTerm.length > 2 ? (
@@ -370,6 +313,63 @@ const SearchMovie: React.FC = () => {
                                 </div>
                             )
                         )}
+
+                    {/* Recommended Movies Section */}
+                    {(selectedYear || selectedGenre) && (
+                      <div className="px-4">
+                        {isLoadingRecommended ? (
+                            <div className="text-center text-gray-400">Loading...</div>
+                        ) : (
+                        <>
+                        {recommendedMovies && recommendedMovies.length > 0 && (
+                            <>
+                            <h2 className="text-2xl font-bold mb-4 text-center sm:text-left">
+                                Recommended Movies
+                            </h2>
+                            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4">
+                            {recommendedMovies.map(
+                                (movie: SimpleMovie) => (
+                                <div
+                                    key={movie.id}
+                                    className="cursor-pointer transition-transform duration-300 hover:scale-105"
+                                    onClick={handleClick(
+                                        movie.id,
+                                        movie.title
+                                    )}
+                                >
+                                    {movie.poster_path ? (
+                                        <img
+                                            src={`https://image.tmdb.org/t/p/w300${movie.poster_path}`}
+                                            alt={movie.title}
+                                            className="w-full h-auto rounded"
+                                        />
+                                    ) : (
+                                        <div className="w-full h-0 pb-[150%] bg-gray-800 rounded flex items-center justify-center">
+                                            <span className="text-center p-2">
+                                                {movie.title}
+                                            </span>
+                                        </div>
+                                    )}
+                                    <h3 className="mt-2 text-sm font-medium truncate">
+                                        {movie.title}
+                                    </h3>
+                                    <p className="text-xs text-gray-400">
+                                        {
+                                            movie.release_date?.split(
+                                                "-"
+                                            )[0]
+                                        }
+                                    </p>
+                                </div>
+                                )
+                            )}
+                            </div>
+                            </>
+                        )}
+                        </>
+                        )}
+                      </div>
+                    )}
                     </>
                 )}
             </div>
