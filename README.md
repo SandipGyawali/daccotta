@@ -9,6 +9,7 @@
 Hey movie lovers! Welcome to **Daccotta**, a web app designed to simplify your movie-watching experience and make it easy to share your favorite films with friends. Think of us as your go-to social network for everything movies! 🎥🍿
 
 **Love it?** 👉 _Don't forget to star this repo!_ 🌟
+
 <table align="center">
     <thead align="center">
         <tr border: 2px;>
@@ -39,39 +40,37 @@ also be a part of the community and join our [discord](https://discord.gg/R859pe
 
 ### This project is now OFFICIALLY accepted for <img src="https://raw.githubusercontent.com/Tarikul-Islam-Anik/Animated-Fluent-Emojis/master/Emojis/Smilies/Heart%20on%20Fire.png" alt="Heart on Fire" width="40" height="40" />
 
-
-| Name                  | Logo                                                      | Purpose                                                                                                      |
-|-----------------------|-----------------------------------------------------------|--------------------------------------------------------------------------------------------------------------|
-| GSSoC'2024-Extd       | ![GSSoC Logo](Images/GSSoC-Ext.png)                       | The coding period is from October 1st to October 30th, during which contributors make contributions and earn points on the platform. |
-| Hacktoberfest 2024    | ![Hacktoberfest Logo](Images/hacktoberfest.png)           | Hacktoberfest is a month-long October event welcoming all skill levels to join the open-source community.     |
+| Name               | Logo                                            | Purpose                                                                                                                              |
+| ------------------ | ----------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------ |
+| GSSoC'2024-Extd    | ![GSSoC Logo](Images/GSSoC-Ext.png)             | The coding period is from October 1st to October 30th, during which contributors make contributions and earn points on the platform. |
+| Hacktoberfest 2024 | ![Hacktoberfest Logo](Images/hacktoberfest.png) | Hacktoberfest is a month-long October event welcoming all skill levels to join the open-source community.                            |
 
 ---
+
 <br>
     
 <img src="https://raw.githubusercontent.com/alo7lika/daccotta/refs/heads/dev/Images/212284100-561aa473-3905-4a80-b561-0d28506553ee.gif" width="900">
-
 
 ## 📑 Table of Contents
 
 1. [🎬 What is Daccotta?](#-what-is-daccotta)
 2. [🔑 Key Features](#-key-features)
-   - [🚧 Coming Soon Features](#coming-soon)
+    - [🚧 Coming Soon Features](#coming-soon)
 3. [🛠️ Tech Stack](#️-tech-stack)
 4. [🚀 Getting Started](#-getting-started)
-   - [🗂️ Setting Up Daccotta Repository](#️-setting-up-daccotta-repository)
-   - [🔧 Installing Bun](#installing-bun)
-     - [🍎 For macOS](#for-macos)
-     - [🪟 For Windows](#for-windows)
-   - [🖥️ Frontend-Only Setup](#️-frontend-only-setup)
-   - [🗂️ Setting Up Full Stack Daccotta](#️-setting-up-full-stack-daccotta-client--server)
-     - [💾 Setting Up MongoDB Atlas](#setting-up-mongodb-atlas)
-     - [🔐 Setting Up Firebase](#setting-up-firebase)
-     - [⚙️ Running the Full Stack Project](#running-the-full-stack-project)
+    - [🗂️ Setting Up Daccotta Repository](#️-setting-up-daccotta-repository)
+    - [🔧 Installing Bun](#installing-bun)
+        - [🍎 For macOS](#for-macos)
+        - [🪟 For Windows](#for-windows)
+    - [🖥️ Frontend-Only Setup](#️-frontend-only-setup)
+    - [🗂️ Setting Up Full Stack Daccotta](#️-setting-up-full-stack-daccotta-client--server)
+        - [💾 Setting Up MongoDB Atlas](#setting-up-mongodb-atlas)
+        - [🔐 Setting Up Firebase](#setting-up-firebase)
+        - [⚙️ Running the Full Stack Project](#running-the-full-stack-project)
 5. [❤️✨ Our Valuable Contributors](#our-valuable-contributors-️)
 6. [🤝 Contributing](#-contributing)
 7. [📧 Contact](#-contact)
 8. [⚠️ Attribution](#️-attribution)
-
 
 ## 🎬 What is Daccotta?
 
@@ -231,24 +230,25 @@ refer to .env.example files for env variables
 
     - Go to the [Firebase Console](https://console.firebase.google.com/) and create a new project. for sign in providers select - email/password.
     - After registering your Node.js app, Firebase will provide your app's configuration object code. This code includes your API keys and other project-specific details.
-        ![image](https://github.com/user-attachments/assets/59ae730b-01da-440a-8e31-6d9aecb4b2b9)
+      ![image](https://github.com/user-attachments/assets/59ae730b-01da-440a-8e31-6d9aecb4b2b9)
 
-     - In the Authentication section of your Firebase project in the console, ensure that you have enabled the Email/Password sign-in method under `Sign-in Method`.
+    - In the Authentication section of your Firebase project in the console, ensure that you have enabled the Email/Password sign-in method under `Sign-in Method`.
 
-     - Set the Firebase credentials in your `client/.env` file as above , refer to .env.example.:
+    - Set the Firebase credentials in your `client/.env` file as above , refer to .env.example.:
 
-       ```
-       VITE_ACCESS_KEY= "your tmdb key"
-        VITE_API_KEY=
-        VITE_AUTH_DOMAIN=
-        VITE_PROJECT_ID=
-        VITE_STORAGE_BUCKET=
-        VITE_MESSAGING_SENDER_ID=
-        VITE_APP_ID=
-        VITE_API_BASE_URL=http://localhost:8080
         ```
- - After setting up, To access the service account, head over to your Firebase console, click on the Settings icon in the top-left corner of the developer console, and         select Project Settings. Then, select the Service Account tab, and click on Generate new private key, rename that file to `firebases.json` and place it in your server folder.
-      ![image](https://github.com/user-attachments/assets/085081d6-3eb1-4018-99ad-cfcf8c7d1a83)
+        VITE_ACCESS_KEY= "your tmdb key"
+         VITE_API_KEY=
+         VITE_AUTH_DOMAIN=
+         VITE_PROJECT_ID=
+         VITE_STORAGE_BUCKET=
+         VITE_MESSAGING_SENDER_ID=
+         VITE_APP_ID=
+         VITE_API_BASE_URL=http://localhost:8080
+        ```
+
+-   After setting up, To access the service account, head over to your Firebase console, click on the Settings icon in the top-left corner of the developer console, and select Project Settings. Then, select the Service Account tab, and click on Generate new private key, rename that file to `firebases.json` and place it in your server folder.
+    ![image](https://github.com/user-attachments/assets/085081d6-3eb1-4018-99ad-cfcf8c7d1a83)
 
 5. **Running the Full Stack Project**:
 
@@ -269,18 +269,17 @@ refer to .env.example files for env variables
 
 ---
 
-
 ## Our Valuable Contributors ❤️✨
 
 <div align="center">
 
-| Contributor                                                                                      | Contributor                                                                                      | Contributor                                                                                      | Contributor                                                                                      |
-|--------------------------------------------------------------------------------------------------|--------------------------------------------------------------------------------------------------|--------------------------------------------------------------------------------------------------|--------------------------------------------------------------------------------------------------|
-| <img src="https://github.com/AshuKr22.png" alt="AshuKr22" width="80"/> <br> <p align="center">[AshuKr22](https://github.com/AshuKr22) 👨‍💻</p> | <img src="https://github.com/sid0000007.png" alt="Sid" width="80"/> <br> <p align="center">[Sid](https://github.com/sid0000007) 👨‍💻</p> | <img src="https://github.com/shubhagarwal1.png" alt="Shubham Agarwal" width="80"/> <br> <p align="center">[Shubham Agarwal](https://github.com/shubhagarwal1) 👨‍💻</p> | <img src="https://github.com/mehul-m-prajapati.png" alt="Mehul" width="80"/> <br> <p align="center">[Mehul](https://github.com/mehul-m-prajapati) 👨‍💻</p> |
-| <img src="https://github.com/alo7lika.png" alt="Alolika" width="80"/> <br> <p align="center">[Alolika](https://github.com/alo7lika) 👩‍💻</p> | <img src="https://github.com/daccotta.png" alt="Daccotta" width="80"/> <br> <p align="center">[Daccotta](https://github.com/daccotta) 👨‍💻</p> | <img src="https://github.com/knighthinata.png" alt="Knighthinata" width="80"/> <br> <p align="center">[Knighthinata](https://github.com/knighthinata) 👨‍💻</p> | <img src="https://github.com/Sourabh782.png" alt="Sourabh" width="80"/> <br> <p align="center">[Sourabh](https://github.com/Sourabh782) 👨‍💻</p> |
-| <img src="https://github.com/samyak-aditya.png" alt="Samyak Aditya" width="80"/> <br> <p align="center">[Samyak Aditya](https://github.com/samyak-aditya) 👨‍💻</p> | <img src="https://github.com/harshbhar0629.png" alt="Harsh Bhar" width="80"/> <br> <p align="center">[Harsh Bhar](https://github.com/harshbhar0629) 👨‍💻</p> | <img src="https://github.com/amitb0ra.png" alt="Amit Bora" width="80"/> <br> <p align="center">[Amit Bora](https://github.com/amitb0ra) 👨‍💻</p> | <img src="https://github.com/mukulkundu.png" alt="Mukul Kundu" width="80"/> <br> <p align="center">[Mukul Kundu](https://github.com/mukulkundu) 👨‍💻</p> |
-| <img src="https://github.com/mayur1377.png" alt="Mayur" width="80"/> <br> <p align="center">[Mayur](https://github.com/mayur1377) 👨‍💻</p> | <img src="https://github.com/IkkiOcean.png" alt="Ikki Ocean" width="80"/> <br> <p align="center">[Ikki Ocean](https://github.com/IkkiOcean) 👨‍💻</p> | <img src="https://github.com/Dhruv-pahuja.png" alt="Dhruv Pahuja" width="80"/> <br> <p align="center">[Dhruv Pahuja](https://github.com/Dhruv-pahuja) 👨‍💻</p> | <img src="https://github.com/say-het.png" alt="Say Het" width="80"/> <br> <p align="center">[Say Het](https://github.com/say-het) 👨‍💻</p> |
-| <img src="https://github.com/DevRish.png" alt="Dev Rish" width="80"/> <br> <p align="center">[Dev Rish](https://github.com/DevRish) 👨‍💻</p> | <img src="https://github.com/vaibhav01-git.png" alt="Vaibhav" width="80"/> <br> <p align="center">[Vaibhav](https://github.com/vaibhav01-git) 👨‍💻</p> | <img src="https://github.com/trijalkaushik.png" alt="Trijal Kaushik" width="80"/> <br> <p align="center">[Trijal Kaushik](https://github.com/trijalkaushik) 👨‍💻</p> |                                                                                      |
+| Contributor                                                                                                                                                      | Contributor                                                                                                                                                | Contributor                                                                                                                                                          | Contributor                                                                                                                                              |
+| ---------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| <img src="https://github.com/AshuKr22.png" alt="AshuKr22" width="80"/> <br> <p align="center">[AshuKr22](https://github.com/AshuKr22) 👨‍💻</p>                     | <img src="https://github.com/sid0000007.png" alt="Sid" width="80"/> <br> <p align="center">[Sid](https://github.com/sid0000007) 👨‍💻</p>                     | <img src="https://github.com/shubhagarwal1.png" alt="Shubham Agarwal" width="80"/> <br> <p align="center">[Shubham Agarwal](https://github.com/shubhagarwal1) 👨‍💻</p> | <img src="https://github.com/mehul-m-prajapati.png" alt="Mehul" width="80"/> <br> <p align="center">[Mehul](https://github.com/mehul-m-prajapati) 👨‍💻</p> |
+| <img src="https://github.com/alo7lika.png" alt="Alolika" width="80"/> <br> <p align="center">[Alolika](https://github.com/alo7lika) 👩‍💻</p>                       | <img src="https://github.com/daccotta.png" alt="Daccotta" width="80"/> <br> <p align="center">[Daccotta](https://github.com/daccotta) 👨‍💻</p>               | <img src="https://github.com/knighthinata.png" alt="Knighthinata" width="80"/> <br> <p align="center">[Knighthinata](https://github.com/knighthinata) 👨‍💻</p>         | <img src="https://github.com/Sourabh782.png" alt="Sourabh" width="80"/> <br> <p align="center">[Sourabh](https://github.com/Sourabh782) 👨‍💻</p>           |
+| <img src="https://github.com/samyak-aditya.png" alt="Samyak Aditya" width="80"/> <br> <p align="center">[Samyak Aditya](https://github.com/samyak-aditya) 👨‍💻</p> | <img src="https://github.com/harshbhar0629.png" alt="Harsh Bhar" width="80"/> <br> <p align="center">[Harsh Bhar](https://github.com/harshbhar0629) 👨‍💻</p> | <img src="https://github.com/amitb0ra.png" alt="Amit Bora" width="80"/> <br> <p align="center">[Amit Bora](https://github.com/amitb0ra) 👨‍💻</p>                       | <img src="https://github.com/mukulkundu.png" alt="Mukul Kundu" width="80"/> <br> <p align="center">[Mukul Kundu](https://github.com/mukulkundu) 👨‍💻</p>   |
+| <img src="https://github.com/mayur1377.png" alt="Mayur" width="80"/> <br> <p align="center">[Mayur](https://github.com/mayur1377) 👨‍💻</p>                         | <img src="https://github.com/IkkiOcean.png" alt="Ikki Ocean" width="80"/> <br> <p align="center">[Ikki Ocean](https://github.com/IkkiOcean) 👨‍💻</p>         | <img src="https://github.com/Dhruv-pahuja.png" alt="Dhruv Pahuja" width="80"/> <br> <p align="center">[Dhruv Pahuja](https://github.com/Dhruv-pahuja) 👨‍💻</p>         | <img src="https://github.com/say-het.png" alt="Say Het" width="80"/> <br> <p align="center">[Say Het](https://github.com/say-het) 👨‍💻</p>                 |
+| <img src="https://github.com/DevRish.png" alt="Dev Rish" width="80"/> <br> <p align="center">[Dev Rish](https://github.com/DevRish) 👨‍💻</p>                       | <img src="https://github.com/vaibhav01-git.png" alt="Vaibhav" width="80"/> <br> <p align="center">[Vaibhav](https://github.com/vaibhav01-git) 👨‍💻</p>       | <img src="https://github.com/trijalkaushik.png" alt="Trijal Kaushik" width="80"/> <br> <p align="center">[Trijal Kaushik](https://github.com/trijalkaushik) 👨‍💻</p>   |                                                                                                                                                          |
 
 </div>
 
@@ -292,19 +291,19 @@ We'd love your help to make **Daccotta** even better! If you're interested in co
 
 ## <img src="https://raw.githubusercontent.com/Tarikul-Islam-Anik/Animated-Fluent-Emojis/master/Emojis/People/Detective.png" alt="Detective" width="40" height="40" /> Contact
 
-### Project Admin⚡
- 
+### Project Admins⚡
+
 <table>
 <tr>
+<td align="center"><img src="https://media.licdn.com/dms/image/v2/D5603AQEY9rnV-tmIyA/profile-displayphoto-shrink_800_800/profile-displayphoto-shrink_800_800/0/1728535091373?e=1736380800&v=beta&t=bMR--TA3hLMOMrp4Z1FDZIFJ35mmqV_ScN9qxBPVN8o" width=150px height=150px /></a></br> <h4 style="color:red;">ASHU KUMAR</h4>
+ <a href="https://www.linkedin.com/in/ashukumar22/"><img src="https://user-images.githubusercontent.com/74038190/235294012-0a55e343-37ad-4b0f-924f-c8431d9d2483.gif" width="32px" height="32px"></img></a>
+</td>
 <td align="center"><img src="https://media.licdn.com/dms/image/v2/D5603AQFp7y1ybjjkBw/profile-displayphoto-shrink_400_400/profile-displayphoto-shrink_400_400/0/1724591751024?e=1735171200&v=beta&t=rfzm248w4SajKg-hNJFpmMe87MZWKj1kf2utUHViQ2Q" width=150px height=150px /></a></br> <h4 style="color:red;">SIDDHARTH GUPTA</h4>
  <a href="https://www.linkedin.com/in/siddharthgupta007/"><img src="https://user-images.githubusercontent.com/74038190/235294012-0a55e343-37ad-4b0f-924f-c8431d9d2483.gif" width="32px" height="32px"></img></a>
 </td>
+
 </tr>
 </table>
-
-
-
-
 
 Feel free to reach out to us for any queries or suggestions:
 **Email**: daccotta.pvt@gmail.com
