@@ -605,6 +605,19 @@ export const getUserData_page = async (uid?: string) => {
     return response.data
 }
 
+export const fetchMovieToList = async (uid: string, page: number, limit: number) => {
+    const idToken = await auth.currentUser?.getIdToken()
+    const response = await api.get(`/api/list/${uid}?page=${page}&limit=${limit}`, {
+        headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${idToken}`,
+        }
+    })
+
+    console.log("response :: ", response.data);
+    return response.data;
+}
+
 export const addMovieToList = async (listId: string, movie: SimpleMovie) => {
     const idToken = await auth.currentUser?.getIdToken()
     console.log("movie is : ", movie)
