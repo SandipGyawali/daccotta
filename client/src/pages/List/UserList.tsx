@@ -1,8 +1,8 @@
-import React, { useState, useEffect } from "react"
+import React, { useEffect, useState } from "react"
 import { useNavigate } from "react-router-dom"
 import { useAuth } from "@/hooks/useAuth"
-import { getUserData } from "@/services/userService"
-import { Plus, Search } from "lucide-react"
+import { fetchMovieToList } from "@/services/userService"
+import { ChevronDown, ChevronLeft, ChevronRight, Plus, Search } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { toast } from "react-toastify"
@@ -10,6 +10,9 @@ import CreateList from "../CreateList/CreateList"
 import { Drawer } from "@/components/ui/drawer"
 import { Trash } from "lucide-react"
 import { deleteList } from "@/services/userService"
+import { Pagination, PaginationContent, PaginationItem } from "@/components/ui/pagination"
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
+import { useQuery } from "@tanstack/react-query"
 
 interface Movie {
     movie_id: string
@@ -28,34 +31,53 @@ interface List {
     averageRating: number
 }
 
-interface UserData {
-    lists: List[]
-}
 const image_url = "https://image.tmdb.org/t/p"
 
 const UserLists: React.FC = () => {
-    const [lists, setLists] = useState<List[]>([])
+    // const [lists, setLists] = useState<List[]>([])
     const [isCreateListOpen, setIsCreateListOpen] = useState(false)
     const { user } = useAuth()
     const navigate = useNavigate()
     const [searchQuery, setSearchQuery] = useState("")
     const [isSearchVisible, setIsSearchVisible] = useState(false)
+    const [pagination, setPagination] = useState<{
+        page: number;
+        limit: number;
+        totalPages: number;
+    }>({
+        page: 1, 
+        limit: 5,
+        totalPages: 1
+    });
 
-    useEffect(() => {
-        const fetchLists = async () => {
-            if (user?.uid) {
-                try {
-                    const userData: UserData = await getUserData(user.uid)
-                    setLists(userData.lists)
-                } catch (error) {
-                    console.error("Error fetching user lists:", error)
-                    toast.error("Failed to fetch your lists. Please try again.")
-                }
+    const fetchLists = async () => {
+        if (user?.uid) {
+            try {
+                const listData: any = await fetchMovieToList(user.uid, pagination.page, pagination.limit);
+                return listData;
+            } catch (error) {
+                console.error("Error fetching user lists:", error)
+                toast.error("Failed to fetch your lists. Please try again.")
             }
         }
+    }
 
-        fetchLists()
-    }, [user])
+    const {data: lists, isLoading: listIsLoading, refetch: refetchList} = useQuery({queryKey: ["lists"], queryFn: fetchLists});
+
+    useEffect(() => {
+        refetchList();
+    }, [pagination])
+
+    useEffect(() => {
+        if(lists?.meta[0]) {
+            setPagination((prev) => ({
+                ...prev,
+                totalPages: lists?.meta[0]?.totalPages ?? prev.page,
+            }));
+        }
+    }, [lists]);
+
+    if(listIsLoading) return <>Loading...</> 
 
     const handleListClick = (listId: string) => {
         navigate(`/list/${listId}`)
@@ -75,8 +97,8 @@ const UserLists: React.FC = () => {
         setSearchQuery(e.target.value)
     }
 
-    const filteredLists = lists.filter((list) =>
-        list.name.toLowerCase().includes(searchQuery.toLowerCase())
+    const filteredLists = lists.data[0].lists.filter((lists : any) =>
+        lists.name.toLowerCase().includes(searchQuery.toLowerCase())
     )
 
     const handleDeleteList = async (listId: string) => {
@@ -84,14 +106,22 @@ const UserLists: React.FC = () => {
         try {
             // Call your delete service or API here
             await deleteList(listId) // Assuming deleteList is your API call
-            setLists((prevLists) =>
-                prevLists.filter((list) => list.list_id !== listId)
-            )
+            refetchList()
             toast.success("List deleted successfully")
         } catch (error) {
             console.error("Error deleting list:", error)
             toast.error("Failed to delete the list. Please try again.")
         }
+    }  
+    
+    // pagination section methods and variables
+    const _limit = [5, 15, 25, 50, 75];
+
+    const handleLimitSelect = (limit: number) => {
+        setPagination(prev => ({
+            ...prev,
+            limit
+        }));
     }
 
     return (
@@ -100,6 +130,27 @@ const UserLists: React.FC = () => {
                 <header className="flex justify-between items-center mb-6">
                     <h1 className="text-2xl font-bold">LISTS</h1>
                     <div className="flex items-center space-x-2">
+                        <DropdownMenu>
+                            <DropdownMenuLabel>Row:</DropdownMenuLabel>
+                                <DropdownMenuTrigger asChild>
+                                    <Button className="w-fit bg-gray-800 text-white hover:bg-gray-700">
+                                        {pagination.limit || "Row Limit"}
+                                        <ChevronDown className="ml-2 h-4 w-4" />
+                                    </Button>
+                                </DropdownMenuTrigger>
+                            <DropdownMenuContent className="max-h-[300px] overflow-y-auto bg-gray-800 text-white">
+                                {
+                                    _limit.map((lim, index) => (
+                                        <DropdownMenuItem
+                                            key={`${lim}-${index}`}
+                                            onClick={() => handleLimitSelect(lim)}
+                                            >
+                                            {lim}
+                                        </DropdownMenuItem>
+                                    ))
+                                }
+                            </DropdownMenuContent>
+                        </DropdownMenu>
                         <Button
                             variant="outline"
                             className="rounded-full"
@@ -131,7 +182,7 @@ const UserLists: React.FC = () => {
                             />
                         </div>
                     )}
-                    {filteredLists.map((list) => (
+                    {filteredLists.map((list: List) => (
                         <div
                             key={list.list_id}
                             className="relative bg-gray-800 rounded-lg overflow-hidden cursor-pointer transition-colors hover:bg-gray-700"
@@ -190,6 +241,38 @@ const UserLists: React.FC = () => {
                             </div>
                         </div>
                     ))}
+                    <Pagination>
+                        <PaginationContent>
+                            <PaginationItem>
+                                <Button 
+                                    onClick={() => (
+                                        setPagination((prev) => ({
+                                            ...prev,
+                                            page: prev.page - 1
+                                        }))
+                                    )}
+                                    disabled={pagination.page === 1}
+                                >
+                                    <ChevronLeft className="w-5 h-5"/>
+                                    Previous
+                                </Button>
+                            </PaginationItem>
+                            <PaginationItem>
+                                <Button 
+                                    onClick={() => 
+                                        setPagination((prev) => ({
+                                            ...prev,
+                                            page: prev.page + 1
+                                        }))
+                                    }   
+                                    disabled={pagination.totalPages === pagination.page}     
+                                >
+                                    Next
+                                    <ChevronRight className="w-5 h-5"/>
+                                </Button>
+                            </PaginationItem>
+                        </PaginationContent>
+                    </Pagination>
                 </div>
             </div>
             <Drawer open={isCreateListOpen} onOpenChange={setIsCreateListOpen}>

@@ -1,4 +1,4 @@
-import React, { useState } from "react"
+import React, { useEffect, useState } from "react"
 import { motion, AnimatePresence } from "framer-motion"
 import { toast } from "react-toastify"
 import { useSearchUsers } from "@/services/userService"
@@ -10,7 +10,7 @@ import { useAuth } from "@/hooks/useAuth"
 import { useFriends } from "@/services/friendsService"
 import { useNavigate } from "react-router-dom"
 import { AxiosError } from "axios"
-import { Users, Trash, AlertTriangle} from "lucide-react"
+import { Users, Trash, AlertTriangle, ChevronDown, ChevronLeft, ChevronRight} from "lucide-react"
 import {
     Dialog,
     DialogContent,
@@ -18,6 +18,8 @@ import {
     DialogTitle,
     DialogFooter,
 } from "@/components/ui/dialog"
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
+import { Pagination, PaginationContent, PaginationItem } from "@/components/ui/pagination"
 
 const searchSchema = z
     .string()
@@ -28,6 +30,15 @@ const FriendsSearch: React.FC = () => {
     const [searchTerm, setSearchTerm] = useState("")
     const [isRemoveDialogOpen, setIsRemoveDialogOpen] = useState(false)
     const [friendToRemove, setFriendToRemove] = useState("")
+    const [pagination, setPagination] = useState<{
+        page: number;
+        limit: number;
+        totalPages: number;
+    }>({
+        page: 1, 
+        limit: 5,
+        totalPages: 1
+    });
     const { user } = useAuth()
     const navigate = useNavigate()
 
@@ -40,9 +51,9 @@ const FriendsSearch: React.FC = () => {
     } = useFriends()
     const [friendRequestStatus, setFriendRequestStatus] = useState<{ [key: string]: { loading: boolean; sent: boolean } }>({});
     const [requestLoading, setRequestLoading] = useState<{ [key: string]: { accept: boolean; reject: boolean } }>({});
-    const { data: friends, isLoading: isLoadingFriends } = useGetFriends()
-    const { data: pendingRequests, isLoading: isLoadingRequests } =
-        useGetPendingRequests()
+    const { data: friends, isLoading: isLoadingFriends, refetch: refetchFriends } = useGetFriends({page: pagination.page, limit: pagination.limit})
+    const { data: pendingRequests, isLoading: isLoadingRequests, refetch: refetchPendingRequests } =
+        useGetPendingRequests({page: pagination.page, limit: pagination.limit})
     const {
         data: searchResults,
         isLoading: isLoadingSearch,
@@ -53,6 +64,15 @@ const FriendsSearch: React.FC = () => {
     const respondToFriendRequestMutation = useRespondToFriendRequest()
     const removeFriendMutation = useRemoveFriend()
     const [removeLoading, setRemoveLoading] = useState(false);
+
+
+    useEffect(() => {
+        if(activeTab === "pending") {
+            refetchPendingRequests();
+        } else{
+            refetchFriends();
+        }
+    }, [pagination])
 
     const handleSearch = () => {
         try {
@@ -140,6 +160,16 @@ const FriendsSearch: React.FC = () => {
         navigate(`/user/${username}`)
     }
 
+    // pagination section methods and variables
+    const _limit = [5, 15, 25, 50, 75];
+
+    const handleLimitSelect = (limit: number) => {
+        setPagination(prev => ({
+            ...prev,
+            limit
+        }));
+    }
+
     return (
         <div className="min-h-screen pt-[5rem] md:pt[5rem] lg:pt-[5rem] max-h-screen overflow-auto scrollbar-hide text-gray-100 lg:p-4 px-[4rem] w-full">
             <div className="max-w-4xl mx-auto">
@@ -186,14 +216,41 @@ const FriendsSearch: React.FC = () => {
                             exit={{ opacity: 0, y: -20 }}
                             transition={{ duration: 0.2 }}
                         >
-                            <h2 className="text-lg font-semibold mb-4">
-                                ALL FRIENDS — {friends?.length || 0}
-                            </h2>
+                            <div className="flex items-center justify-between gap-4">
+                                <h2 className="text-lg font-semibold mb-4">
+                                    ALL FRIENDS — {friends?.length || 0}
+                                </h2>
+                                {/* limit drop down */}
+                                <div>
+                                    <DropdownMenu>
+                                        <DropdownMenuLabel>Row:</DropdownMenuLabel>
+                                        <DropdownMenuTrigger asChild>
+                                            <Button className="w-fit bg-gray-800 text-white hover:bg-gray-700">
+                                                {pagination.limit || "Row Limit"}
+                                                <ChevronDown className="ml-2 h-4 w-4" />
+                                            </Button>
+                                        </DropdownMenuTrigger>
+                                        <DropdownMenuContent className="max-h-[300px] overflow-y-auto bg-gray-800 text-white">
+                                            {
+                                                _limit.map((lim, index) => (
+                                                    <DropdownMenuItem
+                                                        key={`${lim}-${index}`}
+                                                        onClick={() => handleLimitSelect(lim)}
+                                                    >
+                                                        {lim}
+                                                    </DropdownMenuItem>
+                                                ))
+                                            }
+                                        </DropdownMenuContent>
+                                    </DropdownMenu>
+                                </div>
+                            </div>
                             {isLoadingFriends ? (
                                 <p>Loading friends...</p>
                             ) : (
+                                <>
                                 <ul className="space-y-4">
-                                    {friends?.map((friend: string) => (
+                                    {friends?.friends?.map((friend: string) => (
                                         <motion.li
                                             key={friend}
                                             className="flex items-center justify-between bg-gray-800 p-3 rounded-lg overflow-hidden cursor-pointer transition-colors hover:bg-gray-700"
@@ -244,6 +301,43 @@ const FriendsSearch: React.FC = () => {
                                         </motion.li>
                                     ))}
                                 </ul>
+                                {
+                                    friends.friends.length > 0 && (
+                                        <Pagination>
+                                            <PaginationContent>
+                                                <PaginationItem>
+                                                    <Button 
+                                                        onClick={() => (
+                                                            setPagination((prev) => ({
+                                                                ...prev,
+                                                                page: prev.page - 1
+                                                            }))
+                                                        )}
+                                                        disabled={pagination.page === 1}
+                                                    >
+                                                        <ChevronLeft className="w-5 h-5"/>
+                                                        Previous
+                                                    </Button>
+                                                </PaginationItem>
+                                                <PaginationItem>
+                                                    <Button 
+                                                        onClick={() => 
+                                                            setPagination((prev) => ({
+                                                                ...prev,
+                                                                page: prev.page + 1
+                                                            }))
+                                                        }   
+                                                        disabled={pagination.totalPages === pagination.page}     
+                                                    >
+                                                        Next
+                                                        <ChevronRight className="w-5 h-5"/>
+                                                    </Button>
+                                                </PaginationItem>
+                                            </PaginationContent>
+                                        </Pagination>
+                                    )
+                                }
+                                </>
                             )}
                         </motion.section>
                     )}
@@ -256,57 +350,121 @@ const FriendsSearch: React.FC = () => {
                             exit={{ opacity: 0, y: -20 }}
                             transition={{ duration: 0.2 }}
                         >
-                            <h2 className="text-lg font-semibold mb-4">
-                                PENDING REQUESTS —{" "}
-                                {pendingRequests?.length || 0}
-                            </h2>
+                            <div className="flex items-center justify-between gap-4">
+                                <h2 className="text-lg font-semibold mb-4">
+                                    PENDING REQUESTS —{" "}
+                                    {pendingRequests?.length || 0}
+                                </h2>
+                                {/* limit drop down */}
+                                <div>
+                                    <DropdownMenu>
+                                        <DropdownMenuLabel>Row:</DropdownMenuLabel>
+                                        <DropdownMenuTrigger asChild>
+                                            <Button className="w-fit bg-gray-800 text-white hover:bg-gray-700">
+                                                {pagination.limit || "Row Limit"}
+                                                <ChevronDown className="ml-2 h-4 w-4" />
+                                            </Button>
+                                        </DropdownMenuTrigger>
+                                        <DropdownMenuContent className="max-h-[300px] overflow-y-auto bg-gray-800 text-white">
+                                            {
+                                                _limit.map((lim, index) => (
+                                                    <DropdownMenuItem
+                                                        key={`${lim}-${index}`}
+                                                        onClick={() => handleLimitSelect(lim)}
+                                                    >
+                                                        {lim}
+                                                    </DropdownMenuItem>
+                                                ))
+                                            }
+                                        </DropdownMenuContent>
+                                    </DropdownMenu>
+                                </div>
+                            </div>
                             {isLoadingRequests ? (
                                 <p>Loading requests...</p>
                             ) : (
+                                <>
                                 <ul className="space-y-4">
-                                {pendingRequests.map((request: any) => (
-                                    <motion.li
-                                        key={request._id}
-                                        className="flex flex-col items-start justify-between bg-gray-800 p-3 rounded-lg overflow-hidden cursor-pointer transition-colors hover:bg-gray-700 md:flex-row md:items-center"
-                                        initial={{ opacity: 0, y: 20 }}
-                                        animate={{ opacity: 1, y: 0 }}
-                                    >
-                                        <div className="flex items-center gap-3 w-full md:w-auto">
-                                            <Avatar>
-                                                <AvatarImage
-                                                    src={`/api/avatar/${request.from}`}
-                                                    alt={request.from}
-                                                />
-                                                <AvatarFallback>
-                                                    {request.from.substring(0, 2).toUpperCase()}
-                                                </AvatarFallback>
-                                            </Avatar>
-                                            <div>
-                                                <h3 className="font-semibold text-base md:text-lg">{request.from}</h3>
-                                                <p className="text-xs text-gray-400 md:text-sm">Incoming Request</p>
+                                    {pendingRequests?.pendingRequests?.map((request: any) => (
+                                        <motion.li
+                                            key={request._id}
+                                            className="flex flex-col items-start justify-between bg-gray-800 p-3 rounded-lg overflow-hidden cursor-pointer transition-colors hover:bg-gray-700 md:flex-row md:items-center"
+                                            initial={{ opacity: 0, y: 20 }}
+                                            animate={{ opacity: 1, y: 0 }}
+                                        >
+                                            <div className="flex items-center gap-3 w-full md:w-auto">
+                                                <Avatar>
+                                                    <AvatarImage
+                                                        src={`/api/avatar/${request.from}`}
+                                                        alt={request.from}
+                                                    />
+                                                    <AvatarFallback>
+                                                        {request.from.substring(0, 2).toUpperCase()}
+                                                    </AvatarFallback>
+                                                </Avatar>
+                                                <div>
+                                                    <h3 className="font-semibold text-base md:text-lg">{request.from}</h3>
+                                                    <p className="text-xs text-gray-400 md:text-sm">Incoming Request</p>
+                                                </div>
                                             </div>
-                                        </div>
-                                        <div className="space-y-2 mt-3 md:mt-0 md:space-y-0 md:space-x-2 w-full md:w-auto flex flex-col md:flex-row">
-                                            <Button
-                                                onClick={() => handleRespondToRequest(request._id, "accept")}
-                                                variant="default"
-                                                size="sm"
-                                                disabled={requestLoading[request._id]?.accept} // Disable during accept loading
-                                            >
-                                                {requestLoading[request._id]?.accept ? "Accepting..." : "Accept"}
-                                            </Button>
-                                            <Button
-                                                onClick={() => handleRespondToRequest(request._id, "reject")}
-                                                variant="outline"
-                                                size="sm"
-                                                disabled={requestLoading[request._id]?.reject} // Disable during reject loading
-                                            >
-                                                {requestLoading[request._id]?.reject ? "Rejecting..." : "Reject"}
-                                            </Button>
-                                        </div>
-                                    </motion.li>
-                                ))}
-                            </ul>
+                                            <div className="space-y-2 mt-3 md:mt-0 md:space-y-0 md:space-x-2 w-full md:w-auto flex flex-col md:flex-row">
+                                                <Button
+                                                    onClick={() => handleRespondToRequest(request._id, "accept")}
+                                                    variant="default"
+                                                    size="sm"
+                                                    disabled={requestLoading[request._id]?.accept} // Disable during accept loading
+                                                >
+                                                    {requestLoading[request._id]?.accept ? "Accepting..." : "Accept"}
+                                                </Button>
+                                                <Button
+                                                    onClick={() => handleRespondToRequest(request._id, "reject")}
+                                                    variant="outline"
+                                                    size="sm"
+                                                    disabled={requestLoading[request._id]?.reject} // Disable during reject loading
+                                                >
+                                                    {requestLoading[request._id]?.reject ? "Rejecting..." : "Reject"}
+                                                </Button>
+                                            </div>
+                                        </motion.li>
+                                    ))}
+                                </ul>
+                                {
+                                    pendingRequests.length > 0 && (
+                                        <Pagination>
+                                            <PaginationContent>
+                                                <PaginationItem>
+                                                    <Button 
+                                                        onClick={() => (
+                                                            setPagination((prev) => ({
+                                                                ...prev,
+                                                                page: prev.page - 1
+                                                            }))
+                                                        )}
+                                                        disabled={pagination.page === 1}
+                                                    >
+                                                        <ChevronLeft className="w-5 h-5"/>
+                                                        Previous
+                                                    </Button>
+                                                </PaginationItem>
+                                                <PaginationItem>
+                                                    <Button 
+                                                        onClick={() => 
+                                                            setPagination((prev) => ({
+                                                                ...prev,
+                                                                page: prev.page + 1
+                                                            }))
+                                                        }   
+                                                        disabled={pagination.totalPages === pagination.page}     
+                                                    >
+                                                        Next
+                                                        <ChevronRight className="w-5 h-5"/>
+                                                    </Button>
+                                                </PaginationItem>
+                                            </PaginationContent>
+                                        </Pagination>
+                                    )
+                                }
+                                </>
                             )}
                         </motion.section>
                     )}

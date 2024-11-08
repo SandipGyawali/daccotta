@@ -22,9 +22,9 @@ export function useFriends() {
     const { user } = useAuth()
     const queryClient = useQueryClient()
 
-    const getFriends = async () => {
+    const getFriends = async ({page, limit} : {page: number; limit: number}) => {
         const idToken = await user?.getIdToken()
-        const response = await axios.get(`${API_URL}/friends`, {
+        const response = await axios.get(`${API_URL}/friends?page=${page}&limit=${limit}`, {
             headers: { Authorization: `Bearer ${idToken}` },
         })
         return response.data
@@ -72,9 +72,9 @@ export function useFriends() {
         return response.data
     }
 
-    const getPendingRequests = async () => {
+    const getPendingRequests = async ({page, limit}: {page: number, limit: number}) => {
         const idToken = await user?.getIdToken()
-        const response = await axios.get(`${API_URL}/friends/requests`, {
+        const response = await axios.get(`${API_URL}/friends/requests?page=${page}&limit=${limit}`, {
             headers: { Authorization: `Bearer ${idToken}` },
         })
         return response.data
@@ -93,10 +93,10 @@ export function useFriends() {
     }
 
     return {
-        useGetFriends: () =>
+        useGetFriends: ({page, limit}: {page: number, limit: number}) =>
             useQuery({
                 queryKey: ["friends"],
-                queryFn: getFriends,
+                queryFn: () => getFriends({page, limit}),
             }),
         useSendFriendRequest: () =>
             useMutation({
@@ -120,10 +120,10 @@ export function useFriends() {
                 onSuccess: () =>
                     queryClient.invalidateQueries({ queryKey: ["friends"] }),
             }),
-        useGetPendingRequests: () =>
+        useGetPendingRequests: ({page, limit}: {page: number, limit: number}) =>
             useQuery({
                 queryKey: ["friendRequests"],
-                queryFn: getPendingRequests,
+                queryFn: () => getPendingRequests({page, limit}),
             }),
         useGetFriendData: (username: string) =>
             useQuery({

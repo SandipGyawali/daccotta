@@ -1,26 +1,12 @@
 import { type Request, type Response, type NextFunction, Router } from "express"
 import User from "../models/User"
 import { verifyToken } from "../middleware/verifyToken"
-import { getFriendTopMovies } from "../controllers/friendcontroller"
+import { getAllFriendRequests, getFriends, getFriendTopMovies } from "../controllers/friendcontroller"
 
 const router = Router()
 
 // Route to retrieve list of all friends
-router.get(
-    "/",
-    verifyToken,
-    async (req: Request, res: Response, next: NextFunction) => {
-        try {
-            const user = await User.findById(req.user?.uid).populate("friends")
-            if (!user) {
-                return res.status(404).json({ message: "User not found" })
-            }
-            res.status(200).json(user?.friends)
-        } catch (error) {
-            next(error)
-        }
-    }
-)
+router.get("/", verifyToken, getFriends);
 
 // Route to send a friend request
 router.post(
@@ -156,24 +142,7 @@ router.post(
 )
 
 // Route to get pending friend requests
-router.get(
-    "/requests",
-    verifyToken,
-    async (req: Request, res: Response, next: NextFunction) => {
-        try {
-            const user = await User.findById(req.user?.uid)
-            if (!user) {
-                return res.status(404).json({ message: "User not found" })
-            }
-            const pendingRequests = user.friendRequests.filter(
-                (request) => request.status === "pending"
-            )
-            res.status(200).json(pendingRequests)
-        } catch (error) {
-            next(error)
-        }
-    }
-)
+router.get("/requests",verifyToken,getAllFriendRequests);
 
 //Route to get friend details
 router.get(
