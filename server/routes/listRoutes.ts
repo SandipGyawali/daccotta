@@ -2,10 +2,11 @@ import { type Request, type Response, Router } from "express"
 import { verifyToken } from "../middleware/verifyToken"
 import ListModel, { type List } from "../models/List"
 import User from "../models/User"
+import { getMoveList } from "../controllers/listController"
 
 const router = Router()
 
-console.log("I am here in listRoutes")
+router.get("/:uid", verifyToken, getMoveList); 
 
 router.post("/create", verifyToken, async (req: Request, res: Response) => {
     try {

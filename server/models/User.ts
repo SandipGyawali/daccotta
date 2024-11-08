@@ -130,5 +130,7 @@ const userSchema = new Schema<Users>({
 })
 
 const User = model<Users>("User", userSchema)
+const FriendRequest = model<FriendRequest>("FriendRequest", friendRequestSchema);
 
+export { FriendRequest };
 export default User
