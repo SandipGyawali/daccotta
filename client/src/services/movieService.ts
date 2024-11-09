@@ -128,7 +128,8 @@ export const useMovieProviders = (movieId: string) => {
 export const searchMovies = async (
     query: string,
     year?: number,
-    genreId?: number
+    genreId?: number,
+    language?: string
 ): Promise<SimpleMovie[]> => {
     if (query.length < 3) return []
     let url = `https://api.themoviedb.org/3/search/movie?query=${encodeURIComponent(query)}`
@@ -139,6 +140,10 @@ export const searchMovies = async (
 
     if (genreId) {
         url += `&with_genres=${genreId}`
+    }
+
+    if (language) {
+        url += `&language=${language}`
     }
 
     try {
@@ -168,11 +173,12 @@ export const searchMovies = async (
 export const useSearchMovies = (
     query: string,
     year?: number,
-    genreId?: number
+    genreId?: number,
+    language?: string
 ) => {
     return useQuery({
-        queryKey: ["searchMovies", query, year, genreId],
-        queryFn: () => searchMovies(query, year, genreId),
+        queryKey: ["searchMovies", query, year, genreId, language],
+        queryFn: () => searchMovies(query, year, genreId, language),
         enabled: query.length >= 3,
     })
 }
